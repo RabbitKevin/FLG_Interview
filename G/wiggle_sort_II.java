@@ -17,15 +17,24 @@ public class Solution {
         for (int i = 0; i < nums.length; i++)
             nums[i] = (i & 1) == 0 ? temp[--s] : temp[--t];
     }
-
+    /*
+        @para array of number
+        @para left bound
+        @para right bound
+        @para k, kth smallest number in the array
+    */
     private int findMedium(int[] nums, int L, int R, int k) {
         if (L >= R) return nums[R];
         int i = partition(nums, L, R);
-        int cnt = i - L + 1;
+        int cnt = i - L + 1;//get the rank of index
         if (cnt == k) return nums[i];
         return cnt > k ? findMedium(nums, L, i - 1, k) : findMedium(nums, i + 1, R, k - cnt);
     }
-
+    /*
+        @para array of number
+        @para left bound
+        @para right bound
+    */
     private int partition(int[] nums, int L, int R) {
         int val = nums[L];
         int i = L, j = R + 1;
