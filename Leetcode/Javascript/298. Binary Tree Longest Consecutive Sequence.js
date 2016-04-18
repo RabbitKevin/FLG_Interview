@@ -20,7 +20,7 @@ function help(root, max) {
 //感觉代码不够简洁
 /*
   Dis里看到的一个比较简洁的写法，将path 作为变量传入
-  把我的写法里两次左右子树的判断放到递归前面了～～～～
+  把我的写法里两次左右子树的判断放到递归前面了～～～～2
 */
 var longestConsecutive = function(root) {
     if(!root) return 0;
