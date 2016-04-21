@@ -48,6 +48,7 @@ public class Solution {
     从思路1的解法出发，里面可以优化的部分很多.
     因为不需要去求String， 所以不需要Stringbuilder, 直接换成char[].
     递归的部分做减枝，把不符合数字形式的递归剪除.
+    reference: https://leetcode.com/discuss/73721/easiest-20ms-94%25-java-solution
 */
 public class Solution {
     char[][] pairs = {{'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
@@ -76,5 +77,80 @@ public class Solution {
             if(c.length != 1 && c[0] == '0') continue;
             if(left < right || left == right && p[0] == p[1]) dfs(low, high, c, left + 1, right - 1);
         }
+    }
+}
+/*
+    将整体分成三部分.
+    1. 长度为low.length()但是小于low;
+    2. 长度在low.length~high.lenght-1之间的范围（全包括)
+    3. 长度为high.length, 但是小于等于high
+    reference: https://leetcode.com/discuss/97011/super-fast-0ms-99-52%25-java-solution-w-explanations
+*/
+public class Solution {
+    private static final char[][] stroPairs = {{'0','0'},{'1','1'},{'6','9'},{'8','8'},{'9','6'}};
+
+    public int strobogrammaticInRange(String low, String high) {
+        char[] h = high.toCharArray(), l = low.toCharArray();
+        h[h.length - 1]++;
+        if (h.length < l.length || (h.length == l.length && comp(l, h, 0) == 0)) return 0; // low > high
+        int sum = 0;
+        for (int len = low.length(); len < high.length(); sum += stroN(len), len++);
+        return sum + stroSmallerThan(h) - stroSmallerThan(l);
+    }
+
+    private int stroFullN(int len) {
+        if (len == 0) return 1; // ""
+        if (len == 1) return 3; // 0,1,8
+        return 5 * stroFullN(len - 2); // 0...0,1...1,8...8,6...9,9...6
+    }
+
+    private int stroN(int len) {
+        if (len < 2) return stroFullN(len);
+        return 4 * stroFullN(len - 2);
+    }
+
+    private int stroSmallerThan(char[] limit) { //count the stros WITH limit's length and SMALLER THAN limit.
+        int len = limit.length;
+        char[] cur = new char[len];
+        return stroSmallerThan(0, len - 1, cur, limit);
+    }
+
+    private int stroSmallerThan(int i, int j, char[] cur, char[] limit) {
+        int sum = 0;
+        if (j < i)
+            return comp(cur, limit, i);
+        if (j == i) {
+            for (char[] pair : stroPairs)
+                if (pair[0] == pair[1] && pair[0] <= limit[i])
+                    if (pair[0] < limit[i])
+                        sum++;
+                    else {
+                        cur[i] = pair[0];
+                        sum += comp(cur, limit, i);
+                    }
+            return sum;
+        }
+
+        for (char[]  pair : stroPairs) {
+            if (pair[0] < limit[i]) {
+                if (i != 0 || pair[0] != '0')
+                    sum += stroFullN(j - i - 1);
+            } else
+            if (pair[0] == limit[i]) {
+                cur[i] = pair[0];
+                cur[j] = pair[1];
+                sum += stroSmallerThan(i + 1, j - 1, cur, limit);
+            }
+        }
+        return sum;
+    }
+
+    int comp(char[] cur, char[] limit, int st) { //return 1 if cur < limit else 0
+        for (int i = st; i < cur.length; i++) {
+            if (cur[i] < limit[i]) return 1;
+            else
+            if (cur[i] > limit[i]) return 0;
+        }
+        return 0;
     }
 }
