@@ -2,61 +2,47 @@
     https://leetcode.com/discuss/79907/summary-divide-conquer-based-binary-indexed-based-solutions
     慢慢领悟精神...
 */
-public int countRangeSum(int[] nums, int lower, int upper) {
-    long[] sum = new long[nums.length + 1];
-    long[] cand = new long[3 * sum.length + 1];
-    int index = 0;
-    cand[index++] = sum[0];
-    cand[index++] = lower + sum[0] - 1;
-    cand[index++] = upper + sum[0];
-
-    for (int i = 1; i < sum.length; i++) {
-        sum[i] = sum[i - 1] + nums[i - 1];
-        cand[index++] = sum[i];
-        cand[index++] = lower + sum[i] - 1;
-        cand[index++] = upper + sum[i];
+public class Solution {
+    public int countRangeSum(int[] nums, int lower, int upper) {
+        long[] sum = new long[nums.length+1];
+        long[] cand = new long[3*sum.length+1];
+        int index = 0;
+        cand[index++] = sum[0];
+        cand[index++] = sum[0]+lower-1;
+        cand[index++] = sum[0]+upper;
+        for(int i = 1; i < sum.length; ++i) {
+            sum[i] = nums[i-1]+sum[i-1];
+            cand[index++] = sum[i];
+            cand[index++] = sum[i]+lower-1;
+            cand[index++] = sum[i]+upper;
+        }
+        cand[index] = Long.MIN_VALUE;
+        Arrays.sort(cand);
+        //-----------------------------------//
+        int[] bit = new int[cand.length];
+        for(int i = 0; i < sum.length; ++i) {
+            addValue(bit, 1, Arrays.binarySearch(cand, sum[i]));
+        }
+        int count = 0;
+        for(int i = 1; i < sum.length; ++i) {
+            addValue(bit, -1, Arrays.binarySearch(cand, sum[i-1]));
+            count-=getSum(bit, Arrays.binarySearch(cand, sum[i-1]+lower-1));
+            count+=getSum(bit, Arrays.binarySearch(cand, sum[i-1]+upper));
+        }
+        return count;
     }
-
-    cand[index] = Long.MIN_VALUE; // avoid getting root of the binary indexed tree when doing binary search
-    Arrays.sort(cand);
-    //  Constructing binary index tree
-    int[] bit = new int[cand.length];
-
-    // build up the binary indexed tree with only elements from the prefix array "sum"
-    for (int i = 0; i < sum.length; i++) {
-        addValue(bit, Arrays.binarySearch(cand, sum[i]), 1);//记录了每一个sum[i] 之前的sum[i ]个数.
+    private void addValue(int[] bit, int val, int index) {
+        while(index < bit.length) {
+            bit[index]+=val;
+            index += index & -index;
+        }
     }
-
-    int count = 0;
-
-    for (int i = 1; i < sum.length; i++) {
-        // get rid of visited elements by adding -1 to the corresponding tree nodes
-        addValue(bit, Arrays.binarySearch(cand, sum[i - 1]), -1);
-
-        // add the total number of valid elements with upper bound (upper + sum[i - 1])
-        count += query(bit, Arrays.binarySearch(cand, upper + sum[i - 1]));
-
-        // minus the total number of valid elements with lower bound (lower + sum[i - 1] - 1)
-        count -= query(bit, Arrays.binarySearch(cand, lower + sum[i - 1] - 1));
+    private int getSum(int[] bit, int index) {
+        int sum = 0;
+        while(index > 0) {
+            sum+=bit[index];
+            index -= index & -index;
+        }
+        return sum;
     }
-
-    return count;
-}
-
-private void addValue(int[] bit, int index, int value) {
-    while (index < bit.length) {
-        bit[index] += value;
-        index += index & -index;
-    }
-}
-
-private int query(int[] bit, int index) {
-    int sum = 0;
-
-    while (index > 0) {
-        sum += bit[index];
-        index -= index & -index;
-    }
-
-    return sum;
 }
