@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 class Solution {
     public static void main(String[] args) {
-        String str = "abcd a\"bceww addadfga    afafafafg a b c\"ace          f\"g  \"aw     ";
+        String str = "abcd a\"bceww addadfga    afafafafg a b c\"ace          f\"g  \"aw \"heheda\"    ";
         List<String> result = stringParse(str);
         System.out.println(result);
     }
@@ -19,7 +19,7 @@ class Solution {
                 if(str.charAt(index) == '"') isRef = !isRef;
                 index++;
             }
-            result.add(str.substring(i, index));
+            result.add(str.charAt(i) == '"'?str.substring(i+1, index-1):str.substring(i, index));
             while(index < str.length() && str.charAt(index) == ' ') index++;
             i = index;
         }
