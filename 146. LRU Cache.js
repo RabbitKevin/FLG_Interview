@@ -53,6 +53,15 @@ LRUCache.prototype.set = function(key, value) {
             this.dic[key] = node;
             update(key);
         }
+        else {
+            var tmp = new DBListNode(key, value);
+            this.dic[key] = tmp;
+            var first = this.head.next;
+            this.head.next = tmp;
+            tmp.next = first;
+            first.prev = tmp;
+            tmp.prev = this.head;
+        }
     }
 }
 
