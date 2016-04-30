@@ -19,3 +19,8 @@ class Solution {
         return root.val == node.val && isIdentical(root.left, node.left) && isIdentical(root.right, node.right)；
     }
 }
+
+/*
+    http://www.geeksforgeeks.org/check-binary-tree-subtree-another-binary-tree-set-2/
+    O(n)的解法，需要添加special case处理null节点，不然无法处理copy的tree
+*/
