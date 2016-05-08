@@ -27,8 +27,9 @@ public class Manacher {
             if (right > i) p[i] = Math.min(right - i, p[mirror]);//This is minimum value, it could be expanded
 
             // attempt to expand palindrome centered at i
-            while (t[i + (1 + p[i])] == t[i - (1 + p[i])])
+            while (t[i + (1 + p[i])] == t[i - (1 + p[i])]) {
                 p[i]++;
+            }
 
             // if palindrome centered at i expands past right,
             // adjust center based on expanded palindrome.
