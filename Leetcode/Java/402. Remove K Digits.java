@@ -41,12 +41,12 @@ public class Solution {
         StringBuilder sb = new StringBuilder();
         for(char c : num.toCharArray()) {
             while(k > 0 && sb.length() != 0 && sb.charAt(sb.length() - 1) > c) {
-                sb.setLength(sb.length() - 1);
+                sb.setLength(sb.length() - 1);//remove candidate in stack
                 k--;
             }
             if(sb.length() != 0 || c != '0') sb.append(c);  // Only append when it is not leading zero
         }
-        if(k >= sb.length()) return "0";
+        if(k >= sb.length()) return "0";//remaining digit not enough for left k digit
         sb.setLength(sb.length() - k);  // use all remaining k
         return sb.toString();
     }
