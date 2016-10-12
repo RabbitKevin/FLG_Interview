@@ -26,7 +26,7 @@ class Solution {
                 isVisited.add(node);
                 for(int adj : graph.get(node)) {
                     if(!isVisited.contains(adj)) {
-                        
+
                     }
                 }
             }
